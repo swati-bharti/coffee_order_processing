@@ -1,0 +1,390 @@
+swagger: "2.0"
+info:
+  description: "This is a sample API for coffee order processing logic."
+  version: "1.0.0"
+  title: "Coffee Order Processing"
+  contact:
+    email: "api@coffee.io"
+host: "coffeeorder.coffee.io"
+basePath: "/v1"
+tags:
+- name: "coffeeorders"
+  description: "Details of each Coffee order"
+- name: "Payment"
+  description: "Details of the Payment "
+schemes:
+- "https"
+- "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+paths:
+  / coffeeorders:
+    get:
+      tags:
+      - "coffeeorders"
+      summary: "Gets the menu card"
+      description: "Gives list of all Milk and Coffee Types"
+      operationId: "getMenu"
+      responses:
+        "200":
+          description: "List of all types of Coffee and Milk"
+          examples:
+           application/json:
+              coffee_types:
+              - coffee_type_1: "Latte"
+                coffee_type_2: "Flat White"
+                coffee_type_3: "Cappuccino"
+                coffee_type_4: "Long Black"
+                coffee_type_5: "Short Black"
+                coffee_type_6: "Short Macchaito"
+                coffee_type_7: "Mocha"
+                coffee_type_8: "Ristretto and Magic"
+                coffee_type_9: "Affogato"
+                coffee_type_10: "Piccolo"
+              milk_types:
+              - milk_type_1: " Rice Milk"
+                milk_type_2: "Almond Milk"
+                milk_type_3: "Skim Milk"
+                milk_type_4: "Soy Milk"
+                milk_type_5: "Full Cream Milk"
+                milk_type_6: "Coconut Milk"
+              links:
+                - ref: "coffee_order"
+                  href: "https://coffeeorder.coffee.io/v1/ coffeeorders"
+    post:
+      tags:
+      - "coffeeorders"
+      summary: "Create a new order "
+      description: " This method creates new order"
+      operationId: "newOrder"
+      parameters:
+      - in: "body"
+        name: "order"
+        description: "Order that needs to be added"
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: "#/definitions/coffeeorders"
+      responses:
+        "201":
+          description: "Order Placed"
+          examples:
+           application/json:
+            - ref: "update"
+              href: "https://coffeeorder.coffee.io/v1/ coffeeorders"
+            - ref: "delete"
+              href: "https://coffeeorder.coffee.io/v1/coffeeorders/{orderid}"
+            - ref: "get"
+              href: "https://coffeeorder.coffee.io/v1/coffeeorders/{orderid}"
+            - ref: "self"
+              href: "https://coffeeorder.coffee.io/v1/ coffeeorders"
+            - ref: "payment"
+              href: "https://coffeeorder.coffee.io/v1/payment/{orderid}"
+
+
+    put:
+      tags:
+      - "coffeeorders"
+      summary: "Update an existing order"
+      description: "Updates the existing order"
+      operationId: "updateOrder"
+      parameters:
+      - in: "body"
+        name: "order_update"
+        description: "order that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/coffeeorders"
+      responses:
+        "200":
+          description: "Order Updated"
+          examples:
+           application/json:
+            - ref: "self"
+              href: "https://coffeeorder.coffee.io/v1/ coffeeorders"
+            - ref: "delete"
+              href: "https://coffeeorder.coffee.io/v1/coffeeorders/{orderid}"
+            - ref: "payment"
+              href: "https://coffeeorder.coffee.io/v1/payment/{orderid}"
+        "400":
+          description: "Invalid order id"
+        "404":
+          description: "Order not found"
+      
+
+      
+          
+  /coffeeorders/{orderid}:
+    get:
+      tags:
+      - "coffeeorders"
+      summary: "Finds the order by ID"
+      description: "Returns a single order"
+      operationId: "getorderById"
+      parameters:
+      - name: "orderid"
+        in: "path"
+        description: "ID of a order"
+        required: true
+        type: "integer"
+        format: "int32"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/coffeeorders"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Order not found"
+    patch:
+      tags:
+      - "coffeeorders"
+      summary: "Updates a order given the orderid"
+      description: ""
+      operationId: "updateorderWithForm"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      parameters:
+      - name: "orderid"
+        in: "path"
+        description: "orderid to be updated"
+        required: true
+        type: "integer"
+        format: "int32"
+      - name: "drink"
+        in: "formData"
+        description: "new drink"  
+        type: "string"
+        enum: [Latte , Flat White , Cappuccino , Long Black , Short Black , Short Macchaito , Mocha ,  Ristretto and Magic , Affogato ,Piccolo]
+          
+        
+      - name: "sugar"
+        in: "formData"
+        type: "integer"
+        format: "int32"
+        enum: [1,2,3]
+        description: " new sugar"
+      - name: "milk"
+        in: "formData"
+        description: " new milk"
+        type: "string"
+        enum: [Rice Milk , Almond Milk , Skim Milk , Soy Milk , Full Cream Milk ,Coconut Milk]
+          
+      responses:
+        "201":
+          description: "order Updated"
+          examples:
+           application/json:
+            - ref: "self"
+              href: "https://coffeeorder.coffee.io/v1/coffeeorders/{orderid}"
+            - ref: "payment"
+              href: "https://coffeeorder.coffee.io/v1/payment/{orderid}"  
+         
+        "405":
+          description: "Invalid input"
+
+    delete:
+      tags:
+      - "coffeeorders"
+      summary: "Deletes an order"
+      description: ""
+      operationId: "deleteOrder"
+      parameters:
+      - name: "orderid"
+        in: "path"
+        description: "orderid to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "Order deleted Successfully"
+          schema:
+            $ref: "#/definitions/delete_response"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Orderid not found"
+
+  /payment:
+    post:
+      tags:
+      - "Payment"
+      summary: "New Payment"
+      description: "Payment is created."
+      operationId: "createPayment"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Creates new payment"
+        required: true
+        schema:
+          $ref: "#/definitions/Payment"
+      responses:
+        "201":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Payment"
+    get:
+      tags:
+      - "Payment"
+      summary: "Get details of Payment"
+      description: "Getting detials of the payment."
+      operationId: "getPaymentDetails"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Creates new payment"
+        required: true
+        schema:
+          $ref: "#/definitions/Payment"
+      responses:
+        "201":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Payment"
+  
+  /payment/{orderid}:
+    put:
+      tags:
+      - "Payment"
+      summary: "Updates the payment details of a particular order"
+      description: ""
+      operationId: "paymentdetailsupdate"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      parameters:
+        - name: "orderid"
+          in: "path"
+          description: "ID of a order"
+          required: true
+          type: "integer"
+          format: "int32"
+        - name: "TotalAmount"
+          in: "formData"
+          type: "number"
+          format: "float"
+          description: " new amount "
+        - name: "Payment_type"
+          in: "formData"
+          required: true
+          description: " new payment_type "
+          type: "string"
+          enum:
+          - Card
+          - Cash
+        - name: "Card Number"
+          in: "formData"
+          description: " card-number "
+          type: "integer"
+          format: "int32"
+      responses:
+        "201":
+          description: "Details updated successfully"
+          schema:
+              $ref: "#/definitions/Payment"
+              
+    get:
+      tags:
+      - "Payment"
+      summary: "Retrieves payment details of a particular order"
+      description: ""
+      operationId: "getPaymentDetails_orderid"
+      parameters:
+        - name: "orderid"
+          in: "path"
+          description: "ID of a order"
+          required: true
+          type: "integer"
+          format: "int32"
+      responses:
+        "201":
+          description: "Details updated successfully"
+          schema:
+              $ref: "#/definitions/Payment_response"
+  
+          
+definitions:
+  coffeeorders:
+    type: "object"
+    required:
+    
+    properties:
+      date_time:
+        type: "string"
+        format: "date-time"         
+      orderid:
+        type: "integer"
+        format: "int32"
+      drink:
+        type: "string"
+        example: "Latte"
+      sugar:
+        type: "integer"
+        format: "int32"
+      milk:
+        type: "string"
+        example: "Skim Milk"
+
+  delete_response:
+      type: "object"
+      properties:
+        orderid:
+          type: "integer"
+          format: "int32"
+          
+  Payment:
+    type: "object"
+    required:
+    - "orderid"
+    properties:
+      date_time:
+        type: "string"
+        format: "date-time"         
+      payment_id:
+        type: "integer"
+        format: "int32"
+      TotalAmount:
+        type: "number"
+        format: "float"
+      Payment_type:
+        type: string
+        enum:
+        - Card
+        - Cash
+        default: "Card"
+      Card_Number:
+        type: "integer"
+        format: "int32"
+      
+        
+  Payment_response:
+    type: "object"
+    properties:
+      date_time:
+        type: "string"
+        format: "date-time"         
+      payment_id:
+        type: "integer"
+        format: "int32"
+      TotalAmount:
+        type: "number"
+        format: "float"
+      Status:
+        type: string
+        enum: [Successful , Not Successful]
+
+
+  
+      
+ 
+          
+  
+         
+         
+         
+
